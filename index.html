@@ -1,0 +1,111 @@
+<head>
+	<style>
+		*::-webkit-scrollbar {
+			width: 8px;
+		}
+
+		*::-webkit-scrollbar-thumb {
+			background-color: rgba(127, 127, 127, 0.5);
+			border: 2px solid transparent;
+			border-radius: 12px;
+			background-clip: content-box;
+		}
+
+		#main {
+			display: flex;
+			flex-direction: column;
+			font-family: "Consolas", "monospace";
+			font-size: 12px;
+			color: #ddd;
+			background-color: #1e1e1e;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 16px;
+			border-radius: 8px;
+		}
+
+		#valueContainer {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			max-height: 16px;
+			font-style: italic;
+			-webkit-app-region: drag;
+			width: 100%;
+		}
+
+		#editor {
+			flex-grow: 1;
+			background-color: transparent;
+			outline: none;
+			border: 2px solid rgba(255, 255, 255, 0.25);
+			border-radius: 4px;
+			;
+			color: #fefefe;
+			margin: 16px 0;
+			padding: 16px;
+			resize: none;
+			font-size: 16px;
+		}
+
+		#error {
+			display: none;
+			color: tomato;
+		}
+	</style>
+</head>
+<div id="main">
+	<div id="valueContainer">
+		value is:
+		<span id="value"></span>
+	</div>
+	<textarea id="editor"></textarea>
+	<div id="instructions">"value" is your string. value.parse() to JSON parse. Ctrl+Enter to submit. Escape to exit.
+	</div>
+	<div id="error"></div>
+</div>
+<script>
+	const divEditor = document.getElementById("editor");
+	const divValue = document.getElementById("value");
+	const divInstructions = document.getElementById("instructions");
+	const divError = document.getElementById("error");
+
+	divEditor.value = localStorage["js-manipulator-cache"] || "value.";
+	divEditor.focus();
+	const { clipboard } = require("electron");
+	const currentValue = clipboard.readText("selection");
+	divValue.innerText = JSON.stringify(currentValue);
+	window.addEventListener("keydown", (e) => {
+		divError.innerText = "";
+		divError.style.display = "none";
+		divInstructions.style.display = "block";
+		if (27 === e.keyCode) {
+			window.close();
+			return;
+		}
+		if (13 !== e.keyCode || !e.ctrlKey) {
+			return;
+		}
+		const code = divEditor.value;
+		localStorage["js-manipulator-cache"] = code;
+		const extendedString = new String(currentValue)
+		extendedString.parse = () => {
+			return JSON.parse(currentValue);
+		}
+		try {
+			let newValue = new Function("value", `return (${code})`)(extendedString);
+			if("string" !== typeof newValue){
+				newValue = JSON.stringify(newValue);
+			}
+			clipboard.writeText(newValue, "selection");
+			window.close();
+		} catch (e) {
+			divError.innerText = e.message;
+			divError.style.display = "block";
+			divInstructions.style.display = "none";
+		}
+	});
+</script>

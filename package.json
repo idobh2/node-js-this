@@ -1,0 +1,20 @@
+{
+	"name": "js-this",
+	"version": "1.0.0",
+	"description": "Inline text editing using JS",
+	"main": "index.js",
+	"scripts": {
+		"start": "electron ."
+	},
+	"repository": {
+		"url": "git@github.com:idobh2/node-js-this.git"
+	},
+	"author": "idobh2",
+	"license": "ISC",
+	"dependencies": {
+		"electron": "^8.2.3"
+	},
+	"bin": {
+		"js-this": "./execute.js"
+	}
+}
