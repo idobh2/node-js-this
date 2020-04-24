@@ -10,7 +10,7 @@
 		"url": "git@github.com:idobh2/node-js-this.git"
 	},
 	"author": "idobh2",
-	"license": "ISC",
+	"license": "MIT",
 	"dependencies": {
 		"electron": "^8.2.3"
 	},

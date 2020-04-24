@@ -17,3 +17,6 @@ js-this
 3. Manipulate using JS code
 4. Ctrl+Enter
 5. Paste (no need to paste in Linux)
+
+### License
+MIT
